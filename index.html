@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Be My Valentine?</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Comic Sans MS', cursive;
+      background-color: #ffe6e6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    h1 {
+      color: #ff3399;
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      transition: 0.2s ease;
+      cursor: pointer;
+    }
+
+    #yesBtn {
+      background-color: #ff66b2;
+      color: white;
+    }
+
+    #noBtn {
+      background-color: #ccc;
+      color: #333;
+    }
+
+    /* make the noBtn fixed after it moves */
+    #noBtn.moving {
+      position: fixed;
+    }
+  </style>
+</head>
+<body>
+  <h1>Will you be my Valentine? 💖</h1>
+  <div class="buttons">
+    <button id="yesBtn">Yes!</button>
+    <button id="noBtn">No...</button>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+
+    let moving = false;
+    const radius = 100; // how close before it runs
+    const padding = 10; // screen edge buffer
+
+    function getSafeRandomPosition() {
+      const buttonWidth = noBtn.offsetWidth;
+      const buttonHeight = noBtn.offsetHeight;
+
+      const maxX = window.innerWidth - buttonWidth - padding;
+      const maxY = window.innerHeight - buttonHeight - padding;
+
+      const randomX = Math.floor(Math.random() * (maxX - padding + 1)) + padding;
+      const randomY = Math.floor(Math.random() * (maxY - padding + 1)) + padding;
+
+      return [randomX, randomY];
+    }
+
+    document.addEventListener("mousemove", (e) => {
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+
+      const rect = noBtn.getBoundingClientRect();
+      const btnCenterX = rect.left + rect.width / 2;
+      const btnCenterY = rect.top + rect.height / 2;
+
+      const distance = Math.hypot(mouseX - btnCenterX, mouseY - btnCenterY);
+
+      if (distance < radius && !moving) {
+        moving = true;
+
+        // Mark the button as 'moving' so it's positioned relative to screen
+        noBtn.classList.add("moving");
+
+        const [x, y] = getSafeRandomPosition();
+        noBtn.style.left = `${x}px`;
+        noBtn.style.top = `${y}px`;
+
+        setTimeout(() => moving = false, 150);
+      }
+    });
+
+    yesBtn.addEventListener("click", () => {
+      document.body.innerHTML = `<h1>Well done! You made the right choice </h1>`;
+    });
+  </script>
+</body>
+</html>
